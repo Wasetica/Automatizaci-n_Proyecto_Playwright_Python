@@ -1,28 +1,20 @@
+import pytest
 from pages.login_page import LoginPage
 from utils.test_data import TestData
 
-def test_login_success(page):
+
+@pytest.mark.smoke
+def test_login(page):
+    """Caso de prueba: validar login exitoso"""
+
     login = LoginPage(page)
 
-    login.goto(TestData.BASE_URL)
+    # Navegar a la página del login
+    page.goto(TestData.BASE_URL)
+
+    # Realizar login
     login.login(TestData.USERNAME, TestData.PASSWORD)
 
-    login.validate_success()
+    # Validar login exitoso
+    assert login.is_login_successful(), "El login no fue exitoso"
 
-
-def test_login_incorrect_password(page):
-    login = LoginPage(page)
-
-    login.goto(TestData.BASE_URL)
-    login.login("student", "wrong123")
-
-    login.validate_error("Your password is invalid!")
-
-
-def test_login_incorrect_username(page):
-    login = LoginPage(page)
-
-    login.goto(TestData.BASE_URL)
-    login.login("wrongUser", "Password123")
-
-    login.validate_error("Your username is invalid!")

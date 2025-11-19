@@ -1,0 +1,32 @@
+trigger:
+- main
+
+
+pool:
+vmImage: 'ubuntu-latest'
+
+
+steps:
+- task: UsePythonVersion@0
+inputs:
+versionSpec: '3.11'
+
+
+- script: |
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+playwright install --with-deps
+displayName: 'Install dependencies'
+
+
+- script: |
+source venv/bin/activate
+pytest --maxfail=1 -q
+displayName: 'Run tests'
+
+
+- task: PublishBuildArtifacts@1
+inputs:
+PathtoPublish: 'artifacts'
+ArtifactName: 'test-artifacts'

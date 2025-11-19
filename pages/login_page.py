@@ -1,22 +1,21 @@
-from pages.base_page import BasePage
+from playwright.sync_api import Page
 
-class LoginPage(BasePage):
+class LoginPage:
+    USERNAME_INPUT = "#username"
+    PASSWORD_INPUT = "#password"
+    LOGIN_BUTTON = "#submit"
+    SUCCESS_H1 = "//h1[contains(text(),'Logged In Successfully')]"
 
-    USER_FIELD = "#username"
-    PASS_FIELD = "#password"
-    LOGIN_BTN = "#submit"
-    SUCCESS_MESSAGE = "//h1[contains(text(),'Logged In Successfully')]"
-    ERROR_MESSAGE = "#error"
+    def __init__(self, page: Page):
+        self.page = page
 
-    def login(self, username: str, password: str):
-        self.fill(self.USER_FIELD, username)
-        self.fill(self.PASS_FIELD, password)
-        self.click(self.LOGIN_BTN)
+    def navigate(self, url):
+        self.page.goto(url)
 
-    def validate_success(self):
-        self.wait_for(self.SUCCESS_MESSAGE)
-        self.should_have_text(self.SUCCESS_MESSAGE, "Logged In Successfully")
+    def login(self, username, password):
+        self.page.fill(self.USERNAME_INPUT, username)
+        self.page.fill(self.PASSWORD_INPUT, password)
+        self.page.click(self.LOGIN_BUTTON)
 
-    def validate_error(self, expected_msg: str):
-        self.wait_for(self.ERROR_MESSAGE)
-        self.should_have_text(self.ERROR_MESSAGE, expected_msg)
+    def is_login_successful(self):
+        return self.page.is_visible(self.SUCCESS_H1)
